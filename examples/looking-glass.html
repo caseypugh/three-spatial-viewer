@@ -84,18 +84,18 @@
     var videoElm = document.getElementById('video');
     var videoTex = new THREE.VideoTexture(videoElm);
 
+    const urlParams = new URLSearchParams(window.location.search);
+
     var quilt = new SpatialViewer.QuiltConfig();
     quilt.angle = 0;
-    quilt.stereoEyeDistance = 6;
+    quilt.stereoEyeDistance = 8;
     quilt.rows = 6;
     quilt.columns = 8;
     quilt.width = 480;
     quilt.height = 640;
 
-    const urlParams = new URLSearchParams(window.location.search);
-
     var video = {
-      url: urlParams.get('url') ? urlParams.get('url') : ''
+      url: urlParams.get('url') || ''
     }
     videoElm.src = video.url;
     
@@ -105,6 +105,9 @@
 
     if (video.url)
     {
+      videoElm.load();
+      videoElm.play();
+
       // Add play button to GUI
       gui.add({ 'playVideo': () => { } }, 'playVideo')
         .name('Play Video')
@@ -115,15 +118,25 @@
       // Load the textures and store them
       var spatialPlayer = new SpatialViewer.Player(videoTex, null, {
         spatialType: SpatialViewer.SpatialType.LOOKING_GLASS,
-        stereoMode: SpatialViewer.StereoMode.LEFT_RIGHT,
+        stereoMode: SpatialViewer.StereoMode.OFF,
         quilt: quilt
       });
 
       scene.add(spatialPlayer);
+
+      const spatialDropdown = Object.keys(SpatialViewer.SpatialType).filter(k => k.length != 1).reduce((obj, key) => {
+        obj[key] = SpatialViewer.SpatialType[key];
+        return obj;
+      }, {});
+
+      gui.add(spatialPlayer, 'spatial', spatialDropdown).name('Type');
       
-      gui.add(spatialPlayer, 'stereoMode', SpatialViewer.StereoMode).name('Stereo');
-      gui.add(spatialPlayer, 'spatial', SpatialViewer.SpatialType).name('Type');
-      
+      const stereoDropdown = Object.keys(SpatialViewer.StereoMode).filter(k => k.length != 1).reduce((obj, key) => {
+        obj[key] = SpatialViewer.StereoMode[key];
+        return obj;
+      }, {});
+
+      gui.add(spatialPlayer, 'stereoMode', stereoDropdown).name('Stereo');
 
       let quiltParams = gui.addFolder('Quilt Config');
       quiltParams.add(spatialPlayer, 'quiltAngle', 0, quilt.rows * quilt.columns - 1, 1).name('Viewing Angle');
@@ -139,8 +152,8 @@
     // console.log(spatialPlayer);
 
     let dist = camera.position.z - spatialPlayer.position.z;
-    let height = 2 * (aspectRatio < 1 ?  window.innerHeight / window.innerWidth : 1) ; // desired height to fit
-    camera.fov = 2 * Math.atan(height / (2 * dist)) * (180 / Math.PI);
+    let height = aspectRatio < 1 ?  window.innerHeight / window.innerWidth : 1; // desired height to fit
+    camera.fov = Math.atan(height / dist) * (180 / Math.PI);
     camera.updateProjectionMatrix();
 
     renderer.setAnimationLoop(() => {

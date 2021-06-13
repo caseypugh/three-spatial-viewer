@@ -31,19 +31,17 @@ var Uniforms = {
 var SpatialType;
 
 (function (SpatialType) {
-  SpatialType[SpatialType["MONO"] = 0] = "MONO";
-  SpatialType[SpatialType["STEREO"] = 1] = "STEREO";
-  SpatialType[SpatialType["LOOKING_GLASS"] = 2] = "LOOKING_GLASS";
+  SpatialType[SpatialType["LOOKING_GLASS"] = 0] = "LOOKING_GLASS";
 })(SpatialType || (SpatialType = {}));
 
 var StereoMode;
 
 (function (StereoMode) {
-  StereoMode[StereoMode["COLOR"] = 0] = "COLOR";
-  StereoMode[StereoMode["RED_CYAN"] = 1] = "RED_CYAN";
-  StereoMode[StereoMode["DIFFERENCE"] = 2] = "DIFFERENCE";
-  StereoMode[StereoMode["LEFT_RIGHT"] = 3] = "LEFT_RIGHT";
-  StereoMode[StereoMode["OFF"] = 4] = "OFF";
+  StereoMode[StereoMode["OFF"] = 0] = "OFF";
+  StereoMode[StereoMode["COLOR"] = 1] = "COLOR";
+  StereoMode[StereoMode["RED_CYAN"] = 2] = "RED_CYAN";
+  StereoMode[StereoMode["DIFFERENCE"] = 3] = "DIFFERENCE";
+  StereoMode[StereoMode["LEFT_RIGHT"] = 4] = "LEFT_RIGHT";
 })(StereoMode || (StereoMode = {}));
 
 class QuiltConfig {
@@ -60,7 +58,7 @@ class QuiltConfig {
 
 class Props {
   constructor() {
-    this.spatialType = SpatialType.MONO;
+    this.spatialType = SpatialType.LOOKING_GLASS;
     this.quilt = null;
     this.stereoMode = StereoMode.COLOR;
   }
@@ -90,16 +88,15 @@ class Player extends Object3D {
      **/
 
     if (!Player.geometry) {
-      Player.geometry = new PlaneBufferGeometry(2 * this.aspectRatio, 2);
+      Player.geometry = new PlaneBufferGeometry(1, 1); // Player.geometry.scale(this.aspectRatio, 1, 1);
+
+      this.scale.x = this.aspectRatio;
     }
     /** Assign the textures and update the shader uniforms */
 
 
     this.assignTexture(texture);
     this.updateUniforms();
-    /** Set the displacement using the public setter */
-    //   this.displacement = this.props.displacement
-
     /** Create the Mesh/Points and add it to the viewer object */
 
     super.add(this.createMesh(Player.geometry, this.material));
@@ -189,6 +186,7 @@ class Player extends Object3D {
     this.clearDefines(this.shaderDefines);
     this.props.stereoMode = val;
     this.setShaderDefines(this.shaderDefines);
+    this.scale.set(this.aspectRatio, 1, 1);
   }
 
   get aspectRatio() {
@@ -227,35 +225,38 @@ class Player extends Object3D {
   }
 
   set quiltHeight(val) {
-    this.material.uniforms.quiltViewHeight.value = val;
+    this.props.quilt.height = val;
+    this.updateUniforms();
   }
 
   get quiltHeight() {
-    return this.material.uniforms.quiltViewHeight.value;
+    return this.props.quilt.height;
   }
 
   set quiltRows(val) {
-    this.material.uniforms.quiltRows.value = val;
+    this.props.quilt.rows = val;
+    this.updateUniforms();
   }
 
   get quiltRows() {
-    return this.material.uniforms.quiltRows.value;
+    return this.props.quilt.rows;
   }
 
   set quiltColumns(val) {
-    this.material.uniforms.quiltColumns.value = val;
+    this.props.quilt.columns = val;
+    this.updateUniforms();
   }
 
   get quiltColumns() {
-    return this.material.uniforms.quiltColumns.value;
-  }
-
-  get texture() {
-    return this.material.uniforms.colorTexture.value;
+    return this.props.quilt.columns;
   }
 
   set texture(map) {
     this.material.uniforms.colorTexture.value = map;
+  }
+
+  get texture() {
+    return this.material.uniforms.colorTexture.value;
   }
 
 }

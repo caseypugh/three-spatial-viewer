@@ -1,15 +1,15 @@
 enum SpatialType {
-  MONO = 0,
-  STEREO = 1,
-  LOOKING_GLASS = 2
+  // MONO = 0,
+  // STEREO = 1,
+  LOOKING_GLASS
 }
 
 enum StereoMode {
-  COLOR = 0,
-  RED_CYAN = 1,
-  DIFFERENCE = 2,
-  LEFT_RIGHT = 3,
   OFF,
+  COLOR ,
+  RED_CYAN,
+  DIFFERENCE,
+  LEFT_RIGHT,
 }
 
 class QuiltConfig {
@@ -22,7 +22,7 @@ class QuiltConfig {
 }
 
 class Props {
-  public spatialType: SpatialType = SpatialType.MONO
+  public spatialType: SpatialType = SpatialType.LOOKING_GLASS
   public quilt: QuiltConfig = null
   public stereoMode: StereoMode = StereoMode.COLOR
 }

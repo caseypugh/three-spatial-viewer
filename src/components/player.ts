@@ -49,15 +49,14 @@ export default class Player extends Object3D {
      *  of the viewer since it's kept as a static class member
      **/
     if (!Player.geometry) {
-      Player.geometry = new PlaneBufferGeometry(2 * this.aspectRatio, 2)
+      Player.geometry = new PlaneBufferGeometry(1, 1)
+      // Player.geometry.scale(this.aspectRatio, 1, 1);
+      this.scale.x = this.aspectRatio
     }
 
     /** Assign the textures and update the shader uniforms */
     this.assignTexture(texture)
     this.updateUniforms()
-
-    /** Set the displacement using the public setter */
-    //   this.displacement = this.props.displacement
 
     /** Create the Mesh/Points and add it to the viewer object */
     super.add(this.createMesh(Player.geometry, this.material))
@@ -145,6 +144,7 @@ export default class Player extends Object3D {
     this.clearDefines(this.shaderDefines)
     this.props.stereoMode = val
     this.setShaderDefines(this.shaderDefines)
+    this.scale.set(this.aspectRatio, 1, 1)
   }
 
   public get aspectRatio(): number {
@@ -183,34 +183,38 @@ export default class Player extends Object3D {
   }
 
   public set quiltHeight(val: number) {
-    this.material.uniforms.quiltViewHeight.value = val
+    this.props.quilt.height = val
+    this.updateUniforms()
   }
 
   public get quiltHeight(): number {
-    return this.material.uniforms.quiltViewHeight.value
+    return this.props.quilt.height
   }
 
-  public set quiltRows(val: Number) {
-    this.material.uniforms.quiltRows.value = val
+  public set quiltRows(val: number) {
+    this.props.quilt.rows = val
+    this.updateUniforms()
   }
 
-  public get quiltRows(): Number {
-    return this.material.uniforms.quiltRows.value
+  public get quiltRows(): number {
+    return this.props.quilt.rows
   }
 
-  public set quiltColumns(val: Number) {
-    this.material.uniforms.quiltColumns.value = val
+  public set quiltColumns(val: number) {
+    this.props.quilt.columns = val
+    this.updateUniforms()
   }
 
-  public get quiltColumns(): Number {
-    return this.material.uniforms.quiltColumns.value
+  public get quiltColumns(): number {
+    return this.props.quilt.columns
+  }
+
+  public set texture(map: Texture) {
+    this.material.uniforms.colorTexture.value = map
   }
 
   public get texture(): Texture {
     return this.material.uniforms.colorTexture.value
   }
 
-  public set texture(map: Texture) {
-    this.material.uniforms.colorTexture.value = map
-  }
 }
