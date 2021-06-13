@@ -1,6 +1,8 @@
 # Three.js Spatial Viewer
 A spatial media viewer for displaying various kinds of spatial content. Only just started working on this and currently just supports the [Looking Glass format](https://docs.lookingglassfactory.com/keyconcepts/quilts). 
 
+- [View example](https://caseypugh.github.io/three-spatial-viewer/examples/looking-glass.html)
+
 ### Wishlist:
 Would like to support both video and static images/gifs of the following formats:
 - ✔️ Looking Glass
