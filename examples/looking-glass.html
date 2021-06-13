@@ -1,0 +1,159 @@
+<html>
+
+<head>
+  <title>Spatial Media Viewer Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      font-family: Helvetica, Arial, sans-serif;
+      text-align: center;
+    }
+
+    a {
+      color: #ff00ff;
+      text-decoration: none
+    }
+
+    video {
+      display: none;
+    }
+
+    #info {
+      position: absolute;
+      top: 15px;
+      width: 100%;
+    }
+
+    #info_wrapper {
+      background: rgba(0, 0, 0, 0.7);
+    }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+    integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"
+    integrity="sha512-LF8ZB1iTwi4Qvkm4pekHG4a437Y9Af5ZuwbnW4GTbAWQeR2E4KW8WF+xH8b9psevV7wIlDMx1MH9YfPqgKhA/Q=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+  <script src="../dist/spatial-viewer.js"></script>
+</head>
+
+<body>
+
+  <div id="info">
+    <span id="info_wrapper">
+      <a href="https://github.com/caseypugh/THREE.SpatialViewer" target="_blank" rel="noopener">SpatialViewer</a> -
+      Looking Glass Demo<br /> 
+      by <a href="https://twitter.com/caseypugh" target="_blank">@cpu</a>
+      <br /><br />
+    </span>
+  </div>
+
+  <video id="video" crossOrigin="anonymous" muted autoplay loop playsinline src="" />
+
+  <script>
+    'use strict';
+    var gui = new dat.GUI();
+
+    // Create the scene, renderer and camera
+    var scene = new THREE.Scene();
+
+    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.xr.enabled = false;
+    document.body.appendChild(renderer.domElement);
+    // document.body.appendChild(THREE.WEBVR.createButton(renderer));
+
+    
+    let aspectRatio = window.innerWidth / window.innerHeight;
+
+    var camera = new THREE.PerspectiveCamera(90, aspectRatio, 0.01, 1000);
+    // var cameraDolly = new THREE.Object3D(); // We use a camera dolly since WebVR/XR will override camera transform
+    // cameraDolly.position.y = -1.7;
+    // cameraDolly.add(camera);
+    scene.add(camera);
+
+    // Get the video element and create a texture
+    var videoElm = document.getElementById('video');
+    var videoTex = new THREE.VideoTexture(videoElm);
+
+    var quilt = new SpatialViewer.QuiltConfig();
+    quilt.angle = 0;
+    quilt.stereoEyeDistance = 6;
+    quilt.rows = 6;
+    quilt.columns = 8;
+    quilt.width = 480;
+    quilt.height = 640;
+
+    const urlParams = new URLSearchParams(window.location.search);
+
+    var video = {
+      url: urlParams.get('url') ? urlParams.get('url') : ''
+    }
+    videoElm.src = video.url;
+    
+    gui.add(video, 'url').name('Video URL').onFinishChange(function(url) {
+      window.location.href = 'looking-glass.html?url=' + url;
+    });
+
+    if (video.url)
+    {
+      // Add play button to GUI
+      gui.add({ 'playVideo': () => { } }, 'playVideo')
+        .name('Play Video')
+        .onChange(() => {
+          videoElm.play();
+        })
+
+      // Load the textures and store them
+      var spatialPlayer = new SpatialViewer.Player(videoTex, null, {
+        spatialType: SpatialViewer.SpatialType.LOOKING_GLASS,
+        stereoMode: SpatialViewer.StereoMode.LEFT_RIGHT,
+        quilt: quilt
+      });
+
+      scene.add(spatialPlayer);
+      
+      gui.add(spatialPlayer, 'stereoMode', SpatialViewer.StereoMode).name('Stereo');
+      gui.add(spatialPlayer, 'spatial', SpatialViewer.SpatialType).name('Type');
+      
+
+      let quiltParams = gui.addFolder('Quilt Config');
+      quiltParams.add(spatialPlayer, 'quiltAngle', 0, quilt.rows * quilt.columns - 1, 1).name('Viewing Angle');
+      quiltParams.add(spatialPlayer, 'quiltStereoEyeDistance', 0, quilt.rows * quilt.columns - 1, 1).name('Eye Distance');
+      quiltParams.add(spatialPlayer, 'quiltRows', 0, 20, 1).name('Rows');
+      quiltParams.add(spatialPlayer, 'quiltColumns', 0, 20, 1).name('Columns');
+      quiltParams.add(spatialPlayer, 'quiltWidth', 0, 1000, 1).name('Width');
+      quiltParams.add(spatialPlayer, 'quiltHeight', 0, 1000, 1).name('Height');
+      quiltParams.open();
+    }
+
+    camera.position.z = 10;
+    // console.log(spatialPlayer);
+
+    let dist = camera.position.z - spatialPlayer.position.z;
+    let height = 2 * (aspectRatio < 1 ?  window.innerHeight / window.innerWidth : 1) ; // desired height to fit
+    camera.fov = 2 * Math.atan(height / (2 * dist)) * (180 / Math.PI);
+    camera.updateProjectionMatrix();
+
+    renderer.setAnimationLoop(() => {
+      renderer.render(scene, camera);
+    });
+
+    window.addEventListener('resize', ev => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+
+</html>
