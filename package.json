@@ -1,11 +1,16 @@
 {
   "name": "three-spatial-viewer",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A plugin for rendering photos & videos in various spatial formats",
-  "main": "build/three-spatial-viewer.js",
+  "main": "dist/three-spatial-viewer.js",
+  "module": "dist/three-spatial-viewer.esm.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build:js": "rollup -c",
-    "build:watch": "rollup -c --watch"
+    "build:watch": "rollup -c --watch",
+    "build:types": "tsc --declaration --emitDeclarationOnly",
+    "build": "yarn build:types && yarn build:js",
+    "postinstall": "yarn build"
   },
   "repository": {
     "type": "git",
