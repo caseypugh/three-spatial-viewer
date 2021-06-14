@@ -9,8 +9,7 @@
     "build:js": "rollup -c",
     "build:watch": "rollup -c --watch",
     "build:types": "tsc --declaration --emitDeclarationOnly",
-    "build": "yarn build:types && yarn build:js",
-    "postinstall": "yarn build"
+    "build": "yarn build:types && yarn build:js"
   },
   "repository": {
     "type": "git",
