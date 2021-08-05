@@ -150,10 +150,8 @@
     }
 
     setDefaultTextureProps(texture) {
-      texture.minFilter = three.NearestFilter;
-      texture.magFilter = three.LinearFilter;
       texture.format = three.RGBFormat;
-      texture.generateMipmaps = false;
+      texture.generateMipmaps = true;
       texture.wrapS = three.RepeatWrapping;
       texture.wrapT = three.RepeatWrapping;
       return texture;
@@ -265,6 +263,7 @@
   Player.geometry = void 0;
 
   exports.Player = Player;
+  exports.Props = Props;
   exports.QuiltConfig = QuiltConfig;
 
   Object.defineProperty(exports, '__esModule', { value: true });
