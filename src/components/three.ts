@@ -7,13 +7,10 @@
 export {
   Object3D,
   ShaderMaterial,
-  BackSide,
   Mesh,
-  Points,
   PlaneBufferGeometry,
   Texture,
-  NearestFilter,
-  LinearFilter,
+  FrontSide,
   RGBFormat,
   RepeatWrapping
 } from 'three';

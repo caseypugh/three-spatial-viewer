@@ -1,14 +1,11 @@
 import {
   Object3D,
   ShaderMaterial,
-  BackSide,
   Mesh,
-  Points,
   PlaneBufferGeometry,
   Texture,
-  NearestFilter,
-  LinearFilter,
   RGBFormat,
+  FrontSide,
   RepeatWrapping
 } from './three'
 
@@ -19,7 +16,6 @@ import vert from '../shaders/spatial.vert'
 
 import { Uniforms } from './uniforms'
 import { Props, QuiltConfig, SpatialType, StereoMode } from './constants'
-import { DoubleSide, FrontSide } from 'three'
 
 export default class Player extends Object3D {
 
@@ -104,10 +100,8 @@ export default class Player extends Object3D {
   }
 
   private setDefaultTextureProps(texture: Texture): Texture {
-    texture.minFilter = NearestFilter
-    texture.magFilter = LinearFilter
     texture.format = RGBFormat
-    texture.generateMipmaps = false
+    texture.generateMipmaps = true
     texture.wrapS = RepeatWrapping
     texture.wrapT = RepeatWrapping
     return texture
