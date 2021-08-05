@@ -1,10 +1,10 @@
 import { Object3D, Texture } from './three';
-import { SpatialType, StereoMode } from './constants';
+import { Props, SpatialType, StereoMode } from './constants';
 export default class Player extends Object3D {
     private props;
     private static geometry;
     private material;
-    constructor(texture: Texture, depth?: Texture, props?: object);
+    constructor(texture: Texture, depth?: Texture, props?: Props);
     private createMesh;
     /** Internal util to assign the textures to the shader uniforms */
     private assignTexture;

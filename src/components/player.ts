@@ -31,7 +31,7 @@ export default class Player extends Object3D {
     side: FrontSide,
   })
 
-  constructor(texture: Texture, depth?: Texture, props?: object) {
+  constructor(texture: Texture, depth?: Texture, props?: Props) {
     super()
 
     /** Assign the user provided props, if any */
