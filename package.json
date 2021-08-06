@@ -1,5 +1,5 @@
 {
-  "name": "@caseypugh/three-spatial-viewer",
+  "name": "three-spatial-viewer",
   "version": "0.1.0",
   "description": "A plugin for rendering photos & videos in various spatial formats",
   "main": "dist/three-spatial-viewer.js",
@@ -10,10 +10,6 @@
     "build:watch": "rollup -c --watch",
     "build:types": "tsc --declaration --emitDeclarationOnly",
     "build": "yarn build:types && yarn build:js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/caseypugh/three-spatial-viewer.git"
   },
   "keywords": [
     "WebGL",
@@ -66,5 +62,9 @@
   "homepage": "https://github.com/caseypugh/three-spatial-viewer#readme",
   "directories": {
     "example": "examples"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caseypugh/three-spatial-viewer.git"
   }
 }
