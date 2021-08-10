@@ -84,10 +84,10 @@
     var quilt = new SpatialViewer.QuiltConfig();
     quilt.angle = 0;
     quilt.stereoEyeDistance = 8;
-    quilt.rows = 6;
-    quilt.columns = 8;
-    quilt.width = 480;
-    quilt.height = 640;
+    quilt.rows = parseInt(urlParams.get('rows')) || 6;
+    quilt.columns = parseInt(urlParams.get('columns')) || 8;
+    quilt.width = parseInt(urlParams.get('width')) || 480;
+    quilt.height = parseInt(urlParams.get('height')) || 640;
 
     var video = {
       url: urlParams.get('url') || ''
