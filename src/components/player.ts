@@ -58,7 +58,7 @@ export default class Player extends Object3D {
     super.add(this.createMesh(Player.geometry, this.material))
   }
 
-  private createMesh(geo: PlaneBufferGeometry, mat: ShaderMaterial) {
+  private createMesh(geo: PlaneBufferGeometry, mat: ShaderMaterial): Mesh {
     return new Mesh(geo, mat);
   }
 
@@ -112,6 +112,11 @@ export default class Player extends Object3D {
     this.material.uniforms.quiltAngle.value = this.props.quilt.angle
     this.material.uniforms.quiltColumns.value = this.props.quilt.columns
     this.material.uniforms.quiltRows.value = this.props.quilt.rows
+  }
+
+  public dispose(): void {
+    this.material.dispose()
+    this.texture.dispose()
   }
 
   public get shaderDefines(): Array<string> {
