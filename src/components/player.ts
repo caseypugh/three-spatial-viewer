@@ -115,8 +115,11 @@ export default class Player extends Object3D {
   }
 
   public dispose(): void {
-    this.material.dispose()
-    this.texture.dispose()
+    if (this.material) { 
+      Player.geometry.dispose()
+      this.material.dispose()
+      this.texture.dispose()
+    }
   }
 
   public get shaderDefines(): Array<string> {
