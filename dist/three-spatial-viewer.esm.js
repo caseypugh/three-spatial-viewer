@@ -162,6 +162,11 @@ class Player extends Object3D {
     this.material.uniforms.quiltRows.value = this.props.quilt.rows;
   }
 
+  dispose() {
+    this.material.dispose();
+    this.texture.dispose();
+  }
+
   get shaderDefines() {
     return [SpatialType[this.props.spatialType], "STEREO_" + StereoMode[this.props.stereoMode], this.props.stereoMode == StereoMode.OFF ? null : "STEREO_ON"];
   }

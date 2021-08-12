@@ -14,6 +14,7 @@ export default class Player extends Object3D {
     private setProps;
     private setDefaultTextureProps;
     private updateUniforms;
+    dispose(): void;
     get shaderDefines(): Array<string>;
     get spatial(): SpatialType;
     set spatial(val: SpatialType);

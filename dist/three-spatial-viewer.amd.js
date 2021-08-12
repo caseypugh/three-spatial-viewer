@@ -160,6 +160,11 @@ define(['exports', 'three'], function (exports, three) { 'use strict';
       this.material.uniforms.quiltRows.value = this.props.quilt.rows;
     }
 
+    dispose() {
+      this.material.dispose();
+      this.texture.dispose();
+    }
+
     get shaderDefines() {
       return [exports.SpatialType[this.props.spatialType], "STEREO_" + exports.StereoMode[this.props.stereoMode], this.props.stereoMode == exports.StereoMode.OFF ? null : "STEREO_ON"];
     }
