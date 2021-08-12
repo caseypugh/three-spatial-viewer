@@ -163,8 +163,11 @@ class Player extends Object3D {
   }
 
   dispose() {
-    this.material.dispose();
-    this.texture.dispose();
+    if (this.material) {
+      Player.geometry.dispose();
+      this.material.dispose();
+      this.texture.dispose();
+    }
   }
 
   get shaderDefines() {

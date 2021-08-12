@@ -161,8 +161,11 @@ define(['exports', 'three'], function (exports, three) { 'use strict';
     }
 
     dispose() {
-      this.material.dispose();
-      this.texture.dispose();
+      if (this.material) {
+        Player.geometry.dispose();
+        this.material.dispose();
+        this.texture.dispose();
+      }
     }
 
     get shaderDefines() {
