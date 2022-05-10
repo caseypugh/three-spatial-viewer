@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('three')) :
   typeof define === 'function' && define.amd ? define(['exports', 'three'], factory) :
-  (global = global || self, factory(global.SpatialViewer = {}, global.THREE));
-}(this, (function (exports, three) { 'use strict';
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.SpatialViewer = {}, global.THREE));
+})(this, (function (exports, three) { 'use strict';
 
   var frag = "#define GLSLIFY 1\nuniform sampler2D colorTexture;uniform float quiltRows;uniform float quiltColumns;uniform float quiltAngle;uniform float quiltStereoEyeDistance;uniform float u_vOffset;uniform float u_hOffset;varying vec2 vUv;vec4 getQuiltViewingAngle(sampler2D tex,float angle,int stereo){float stereoMulti=stereo>0 ? 2.0 : 1.0;float stereoOffset=stereo==2&&vUv.x>=0.5 ?-0.5 : 0.0;return texture2D(tex,vec2((vUv.x+stereoOffset)*(1.0/quiltColumns)*stereoMulti+mod(angle,quiltColumns)/quiltColumns,vUv.y*(1.0/quiltRows)+floor(angle/quiltColumns)/quiltRows));}void main(){\n#if defined(LOOKING_GLASS) && defined(STEREO_OFF)\ngl_FragColor=getQuiltViewingAngle(colorTexture,quiltAngle,0);\n#elif defined(LOOKING_GLASS) && defined(STEREO_ON)\nfloat total=quiltRows*quiltColumns;float angle=quiltAngle;if(angle+quiltStereoEyeDistance>=total){angle=total-quiltStereoEyeDistance-1.0;}\n#ifdef STEREO_LEFT_RIGHT\nvec4 tex_l=getQuiltViewingAngle(colorTexture,angle,1);vec4 tex_r=getQuiltViewingAngle(colorTexture,angle+quiltStereoEyeDistance,2);\n#else\nvec4 tex_l=getQuiltViewingAngle(colorTexture,angle,0);vec4 tex_r=getQuiltViewingAngle(colorTexture,angle+quiltStereoEyeDistance,0);\n#endif\n#elif defined(STEREO)\nvec4 tex_l=texture2D(colorTexture,vec2(vUv.x*0.5,vUv.y));vec4 tex_r=texture2D(colorTexture,vec2(vUv.x*0.5+0.5+u_hOffset,vUv.y+u_vOffset));\n#endif\n#if defined(STEREO_COLOR)\ngl_FragColor=vec4(tex_l.r,(tex_l.g+tex_r.g)/2.0,tex_r.b,1);\n#elif defined(STEREO_RED_CYAN)\ngl_FragColor=vec4(tex_l.r,tex_r.g,tex_r.b,1);\n#elif defined(STEREO_DIFFERENCE)\ngl_FragColor=vec4(tex_l.r,0,tex_r.b,1);\n#elif defined(STEREO_LEFT_RIGHT)\nif(vUv.x<0.5){gl_FragColor=tex_l;}else{gl_FragColor=tex_r;}\n#endif\n}"; // eslint-disable-line
 
@@ -32,11 +32,13 @@
     }
   };
 
+  exports.SpatialType = void 0;
+
   (function (SpatialType) {
     SpatialType[SpatialType["LOOKING_GLASS"] = 0] = "LOOKING_GLASS";
   })(exports.SpatialType || (exports.SpatialType = {}));
 
-
+  exports.StereoMode = void 0;
 
   (function (StereoMode) {
     StereoMode[StereoMode["OFF"] = 0] = "OFF";
@@ -276,5 +278,5 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 //# sourceMappingURL=three-spatial-viewer.js.map
